@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
-Shader "HUnity Shaders Book/ Chapter 10Fresnel"
+Shader "Unity Shaders Book/ Chapter 10/Fresnel"
 {
 	Properties
 	{
