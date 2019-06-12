@@ -51,16 +51,14 @@
 
 				float time = frac(_Time.y * _Speed);
 				float t = floor(time / 0.3);
-
-
-
+				
 				float t_1 = step(t,0.9); // t < 0.9 return 1 else return 0
 				float t_2 = step(t,1.9); // t < 1.9 return 1 else return 0
 				float t_3 = step(2,t); // t >= 2 return 1 else return 0
-
+				
 				//为0表示 t>1 为1表示t<1
 				//float t = t_1 * t_2;
-
+				
 				float4 col_1 = tex2D(_MainTex,i.uv);
 				float4 col_2 = tex2D(_Tex1,i.uv);
 				float4 col_3 = tex2D(_Tex2,i.uv);
@@ -68,7 +66,7 @@
 				//当t_1 和 t_2 为1时，必定是在 0 <= t < 1
 				//当t_2为1时，t_3 必定为0，所以取反，必定是在 1 <= t < 2
 				//当t_3>=2时，必定是在 t >= 2
-				return  (t_1 * t_2  * col_1) + (t_2 * (1 - t_3) * col_2) + (t_3 * col_3);
+				return  (t_1 * t_2  * col_1) + ((1 - (t_1 * t_2)) * (1 - t_3) * col_2) + (t_3 * col_3);
 
 				//Equlas 上面
 				//fixed4 col;
