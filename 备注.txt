@@ -2,5 +2,5 @@
 2.BlendOp BlendOperation：并非把源颜色和目标颜色简单相加后混合，而是使用BlendOperation对它们进行其他操作
 3.Blend SraAlpha OneMinusSrcAlpha：DstColor（new） = SrcAlpha * SrcColor + （1 - SrcAlpha） * DstColor（old）
 4.源像素：可理解为当前片段着色器返回的颜色   目标像素：后台缓冲区的像素
-5.
+
 
