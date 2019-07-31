@@ -2,6 +2,18 @@
 2.BlendOp BlendOperation：并非把源颜色和目标颜色简单相加后混合，而是使用BlendOperation对它们进行其他操作
 3.Blend SraAlpha OneMinusSrcAlpha：DstColor（new） = SrcAlpha * SrcColor + （1 - SrcAlpha） * DstColor（old）
 4.源像素：可理解为当前片段着色器返回的颜色   目标像素：后台缓冲区的像素
+5.坐标计算相关：
+	（1）：裁剪空间坐标： 裁剪空间下，无论是正交投影还是透视投影，必须遵守 -w <= X <= w， -w <= Y <= w， -w <= Z <= w（透视投影（近裁剪平面） -near <= z <=near,
+		（远裁剪平面）-far <= z <= far;正交投影  -1 <= z <= 1），投影矩阵的本质是对顶点坐标进行缩放并舍弃裁剪超过裁剪空间坐标的顶点。
+	（2）：屏幕空间坐标：把视锥体投影到屏幕空间（这才是真正的投影）中。使用齐次除法（透视除法，各分量/w，得到归一化坐标）。Unity使用的OpenGL传统，范围
+		为[-1,1]，转换为屏幕坐标可表示为x = x / w * pixelWidth / 2 + pixelWidth / 2，y = y / w * pixelHeight / 2 + pixelHeight / 2。
+	（3）：视口空间坐标：屏幕空间下的x = x / （Screen.width  /  Screen.height），y = y / （Screen.width  /  Screen.height）；也可以直接用裁剪空间的坐标求得 
+		x = x / w * 0.5 + 0.5，y = y / w * 0.5 + 0.5。
 
 
+6.齐次矩阵：前三个是标准的x，y，z分量，第四个是w分量。实际的2D的点用齐次坐标表示为（x，y，1），对于那些不在w=1平面上的点，则将它们投影到w=1平面上。所以齐次坐标
+		（x，y，w）映射的实际2D点为（x/w，y/w）。w=0时，表示不存在实际点，也可以解释为“位于无穷远的点”，它描述了一个方向而不是一个位置。
+
+7.正交投影：正交平面的投影线是从源空间中的点平行的连接到到投影点所形成的连线，也叫平行投影。
+8.透视投影：小孔成像；
 
