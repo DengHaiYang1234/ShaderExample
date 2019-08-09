@@ -1,19 +1,21 @@
-1.Blend SrcFactor DsstFactor : ������ϣ������û�����ӣ�Դ��ɫ����ƬԪ��������ɫ�������SrcFactor����Ŀ����ɫ���Ѿ���������ɫ�������ɫ�������DstFactor,Ȼ���������Ӻ��ٴ�����ɫ�����С�
-2.BlendOp BlendOperation�����ǰ�Դ��ɫ��Ŀ����ɫ����Ӻ��ϣ�����ʹ��BlendOperation�����ǽ�����������
-3.Blend SraAlpha OneMinusSrcAlpha��DstColor��new�� = SrcAlpha * SrcColor + ��1 - SrcAlpha�� * DstColor��old��
-4.Դ���أ�������Ϊ��ǰƬ����ɫ�����ص���ɫ   Ŀ�����أ���̨������������
-5.���������أ�
-	��1�����ü��ռ����꣺ �ü��ռ��£�����������ͶӰ����͸��ͶӰ���������� -w <= X <= w�� -w <= Y <= w�� -w <= Z <= w��͸��ͶӰ�����ü�ƽ�棩 -near <= z <=near,
-		��Զ�ü�ƽ�棩-far <= z <= far;����ͶӰ  -1 <= z <= 1����ͶӰ����ı����ǶԶ�������������Ų������ü������ü��ռ�����Ķ��㡣
-	��2������Ļ�ռ����꣺����׶��ͶӰ����Ļ�ռ䣨�����������ͶӰ���С�ʹ����γ�����͸�ӳ�����������/w���õ���һ�����꣩��Unityʹ�õ�OpenGL��ͳ����Χ
-		Ϊ[-1,1]��ת��Ϊ��Ļ����ɱ�ʾΪx = x / w * pixelWidth / 2 + pixelWidth / 2��y = y / w * pixelHeight / 2 + pixelHeight / 2��
-	��3�����ӿڿռ����꣺��Ļ�ռ��µ�x = x / ��Screen.width  /  Screen.height����y = y / ��Screen.width  /  Screen.height����Ҳ����ֱ���òü��ռ��������� 
-		x = x / w * 0.5 + 0.5��y = y / w * 0.5 + 0.5��
+1.Blend SrcFactor DsstFactor : 开启混合，并设置混合因子，源颜色（该片元产生的颜色）会乘以SrcFactor，而目标颜色（已经存在于颜色缓冲的颜色）会乘以DstFactor,然后把两者相加后再存入颜色缓冲中。
+2.BlendOp BlendOperation：并非把源颜色和目标颜色简单相加后混合，而是使用BlendOperation对它们进行其他操作
+3.Blend SraAlpha OneMinusSrcAlpha：DstColor（new） = SrcAlpha * SrcColor + （1 - SrcAlpha） * DstColor（old）
+4.源像素：可理解为当前片段着色器返回的颜色   目标像素：后台缓冲区的像素
+5.坐标计算相关：
+	（1）：裁剪空间坐标： 裁剪空间下，无论是正交投影还是透视投影，必须遵守 -w <= X <= w， -w <= Y <= w， -w <= Z <= w（透视投影（近裁剪平面） -near <= z <=near,
+		（远裁剪平面）-far <= z <= far;正交投影  -1 <= z <= 1），投影矩阵的本质是对顶点坐标进行缩放并舍弃裁剪超过裁剪空间坐标的顶点。
+	（2）：屏幕空间坐标：把视锥体投影到屏幕空间（这才是真正的投影）中。使用齐次除法（透视除法，各分量/w，得到归一化坐标）。Unity使用的OpenGL传统，范围
+		为[-1,1]，转换为屏幕坐标可表示为x = x / w * pixelWidth / 2 + pixelWidth / 2，y = y / w * pixelHeight / 2 + pixelHeight / 2。
+	（3）：视口空间坐标：屏幕空间下的x = x / （Screen.width  /  Screen.height），y = y / （Screen.width  /  Screen.height）；也可以直接用裁剪空间的坐标求得 
+		x = x / w * 0.5 + 0.5，y = y / w * 0.5 + 0.5。
 
 
-6.��ξ���ǰ�����Ǳ�׼��x��y��z���������ĸ���w������ʵ�ʵ�2D�ĵ�����������ʾΪ��x��y��1����������Щ����w=1ƽ���ϵĵ㣬������ͶӰ��w=1ƽ���ϡ������������
-		��x��y��w��ӳ���ʵ��2D��Ϊ��x/w��y/w����w=0ʱ����ʾ������ʵ�ʵ㣬Ҳ���Խ���Ϊ��λ������Զ�ĵ㡱����������һ�����������һ��λ�á�
+6.齐次矩阵：前三个是标准的x，y，z分量，第四个是w分量。实际的2D的点用齐次坐标表示为（x，y，1），对于那些不在w=1平面上的点，则将它们投影到w=1平面上。所以齐次坐标
+		（x，y，w）映射的实际2D点为（x/w，y/w）。w=0时，表示不存在实际点，也可以解释为“位于无穷远的点”，它描述了一个方向而不是一个位置。
 
-7.����ͶӰ������ƽ���ͶӰ���Ǵ�Դ�ռ��еĵ�ƽ�е����ӵ���ͶӰ�����γɵ����ߣ�Ҳ��ƽ��ͶӰ��
-8.͸��ͶӰ��С�׳���.
+7.正交投影：正交平面的投影线是从源空间中的点平行的连接到到投影点所形成的连线，也叫平行投影。
+8.透视投影：小孔成像.
+9.Pixels To Units：Unity3D中这个比例的默认值是100，即100像素等于1单位，如果我们的游戏屏幕有640像素高，那么实际换算成单位高度则是6.4个单位。
+10.摄像机实际宽度 = 摄像机高度 * 屏幕宽高比，摄像机实际高度 = 摄像机宽度 * 屏幕高宽比；
 
