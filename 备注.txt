@@ -18,4 +18,11 @@
 8.透视投影：小孔成像.
 9.Pixels To Units：Unity3D中这个比例的默认值是100，即100像素等于1单位，如果我们的游戏屏幕有640像素高，那么实际换算成单位高度则是6.4个单位。
 10.摄像机实际宽度 = 摄像机高度 * 屏幕宽高比，摄像机实际高度 = 摄像机宽度 * 屏幕高宽比；
+11._MainTexture_TexelSize，一个容易忘记的属性
+	{TextureName}_TexelSize - a float4 property contains texture size information:
+	- x contains 1.0/width
+	- y contains 1.0/height
+	- z contains width
+	- w contains height
+
 
